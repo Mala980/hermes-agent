@@ -12,7 +12,8 @@
 //! riwayat via `session/update` SEBELUM respons load/resume, sesuai spek
 //! ACP). Penyimpangan yang disengaja didokumentasikan di tiap handler.
 use crate::app::save_config;
-use crate::{AgentFactory, App};
+use crate::app::App;
+use crate::cmd::chat::AgentFactory;
 use hermes_core::{
     Agent, CancelFlag, HermesConfig, HermesError, LlmProvider, MemoryStore, Role, Session,
 };
