@@ -1,243 +1,174 @@
-<p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
-</p>
+# Hermes Agent — Rust Port 🦀
 
-# Hermes Agent ☤
-<p align="center">
-  <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> | <a href="https://hermes-agent.nousresearch.com/">Hermes Desktop</a>
-</p>
-<p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
-  <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
-  <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="اردو"></a>
-  <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
-</p>
+Port Rust dari [Hermes Agent](https://github.com/NousResearch/hermes-agent) (Nous Research, MIT) —
+agen AI otonom yang *self-improving*: memiliki learning loop, memori persisten lintas sesi,
+dan dapat dijangkau dari CLI maupun messaging gateway.
 
-**The self-improving AI agent built by [Nous Research](https://nousresearch.com).** It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
-
-Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers). Switch with `hermes model` — no code changes, no lock-in.
-
-<table>
-<tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
-<tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
-<tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
-<tr><td><b>Scheduled automations</b></td><td>Built-in cron scheduler with delivery to any platform. Daily reports, nightly backups, weekly audits — all in natural language, running unattended.</td></tr>
-<tr><td><b>Delegates and parallelizes</b></td><td>Spawn isolated subagents for parallel workstreams. In Desktop, choose their provider, model, and limits under Settings → Model → Subagents, then Apply the complete route. Write Python scripts that call tools via RPC, collapsing multi-step pipelines into zero-context-cost turns.</td></tr>
-<tr><td><b>Runs anywhere, not just your laptop</b></td><td>Seven terminal backends — local, Docker, SSH, Singularity, Modal, Daytona, and Vercel Sandbox. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
-<tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
-</table>
-
----
-
-## Quick Install
-
-### Linux, macOS, WSL2
-
-```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-```
-
-### Windows (native, PowerShell)
-
-> **Heads up:** Native Windows runs Hermes without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/NousResearch/hermes-agent/issues).
-
-Run this in PowerShell:
-
-```powershell
-iex (irm https://hermes-agent.nousresearch.com/install.ps1)
-```
-
-The source installer delegates Python 3.14, Node.js, npm, ripgrep, FFmpeg,
-and Python dependencies to PM. If Git is absent, it stages the verified Git
-for Windows archive in Hermes' tool store. It does not replace your system Git.
-See [installation methods](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
-for the separate MSIX/App Installer package and its update ownership.
-
-> **Android / Termux:** A signed APT repository is available for aarch64 devices, with a `stable` channel (tagged releases) and a prerelease `canary` channel. The package includes Python, Node.js, and the TUI. Use the [Termux guide](https://hermes-agent.nousresearch.com/docs/getting-started/termux), not the desktop/server installer script.
+> Status (2026-10-19): paritas fungsional dengan versi aslinya untuk semua subsistem
+> utama — tools (51), provider (7), gateway (8 platform), backend exec (8),
+> evals, skills hub, TUI. Tersisa: aplikasi desktop Electron (butuh Tauri) dan
+> segelintir tools yang terikat platform/desktop asli (Yuanbao, utilitas desktop).
+> Integrasi pihak ketiga diverifikasi via mock server (Telegram, Discord, Slack,
+> Matrix, Teams, WhatsApp) dan Chrome headless asli (browser tools); **gateway
+> Telegram terverifikasi live end-to-end** melawan Bot API asli
+> (`HERMES_TEST_LIVE_TELEGRAM=1 cargo test -p hermes-gateway --test live_telegram`).
 >
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux.
+> Build otomatis: setiap push/PR menjalankan `cargo build`, `clippy -D warnings`,
+> dan `cargo test --workspace` via GitHub Actions (`.github/workflows/rust.yml`),
+> plus cross-compile release untuk Linux ARM64 (`aarch64-unknown-linux-gnu`)
+> dan ARMv7 (`armv7-unknown-linux-gnueabihf`).
 
-After installation:
+## Fitur
+
+| Fitur Hermes asli | Status di port Rust |
+|---|---|
+| Agent loop (think → tool call → observasi) | ✅ `hermes-core::Agent` |
+| Provider model-agnostic (OpenRouter, Nous Portal, OpenAI, Ollama, vLLM, ...) | ✅ OpenAI-compatible streaming + Anthropic + **Gemini native** + **Azure OpenAI** + **AWS Bedrock (SigV4)** |
+| Credential pool + rotasi & cooldown API key | ✅ |
+| 60+ built-in tools | ✅ **51 tool**: `exec` (+`background`), `execute_code`, file tools, `patch`, `glob`, `grep`, `web_fetch`, `web_search`, `x_search`, `memory_*`, `skill_*`, `session_search`, `cron_*`, `gateway_send`, `react_to_message`, `datetime_now`, `image_generate`, `text_to_speech`, `transcribe_audio`, `video_generate`, `video_analyze`, `vision_analyze`, `todo_list`, `clarify`, `delegate_task`, `process_manage`, 13× `browser_*` (CDP), 5× `feishu_*` |
+| Backend eksekusi (local/docker/ssh/daytona) | ✅ 8 backend: local, docker, ssh, **daytona** (REST), **modal** (CLI), **singularity/apptainer** (CLI), **vercel** (node sandbox) |
+| Persistent memory + FTS5 lintas sesi | ✅ SQLite (`hermes-memory`) |
+| Skills system (SKILL.md, self-improving) | ✅ `hermes-skills` + learning loop otomatis + **skills hub** (`hermes skills hub search/install`) |
+| Evals | ✅ `hermes eval run` (suite JSONL + `builtin:tools`, skor kelulusan) |
+| Kompresi konteks otomatis | ✅ ringkasan via LLM saat melewati ambang |
+| MCP client (stdio + HTTP) | ✅ tool MCP dijembatani sebagai `mcp__<server>__<tool>` |
+| Messaging gateway | ✅ 8 platform: Telegram (long-polling), Discord (Gateway WS), Slack (Socket Mode), WhatsApp (Cloud API + webhook), **Matrix** (Client-Server API), **Signal** (via signal-cli), **Teams** (Bot Framework + webhook), **Email** (SMTP + IMAP polling) |
+| Bot mode (multi-bot, profil sendiri) | ✅ `[[bots]]` di config + `hermes gateway --bot <nama>` |
+| Webhook masuk / keluar | ✅ `hermes webhook serve` (POST /hook); `webhooks.outgoing` untuk event gateway & cron |
+| Cron scheduler + pengiriman ke platform | ✅ `hermes cron` |
+| Voice mode | ✅ `hermes voice say|listen`; `/voice <teks>` di Telegram |
+| ACP server untuk IDE | ✅ `hermes acp` (JSON-RPC via stdio: initialize/session/prompt) |
+| Batch processing + trajectory export | ✅ `hermes batch --input prompts.jsonl`; `hermes session export` |
+| TUI interaktif | ✅ `hermes tui` (Ratatui — padanan Ink TUI: streaming, input, scroll, status bar) |
+| Security: approval bertingkat | ✅ ask/allow/deny + aturan per tool |
+| Profil ganda | ✅ `~/.hermes/config.toml` |
+| CLI `hermes` | ✅ chat, run, skills, memory, config, cron, gateway, mcp, model, doctor, setup, version, voice, acp, batch, session, webhook, **tui**, **eval** |
+| Desktop app (Electron) | ⏳ belum — butuh framework GUI desktop terpisah (kandidat: Tauri) |
+
+## Arsitektur
+
+```
+crates/
+  hermes-core/       tipe pesan, trait port, config, agent loop, kompresi, budget
+  hermes-providers/  klien LLM streaming (OpenAI-compat, Anthropic, Gemini, Azure, Bedrock/SigV4) + credential pool
+  hermes-tools/      trait Tool + registry + tool bawaan (shell, fs, web, memori, skill)
+  hermes-memory/     SQLite + FTS5: memori & sesi
+  hermes-skills/     manajer SKILL.md (procedural memory)
+  hermes-mcp/        klien MCP + jembatan tool
+  hermes-gateway/    trait Platform + Telegram + registry + bot mode
+  hermes-cron/       job store + scheduler + tool cron_*
+  hermes-cli/        biner `hermes`
+```
+
+## Instalasi
 
 ```bash
-source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-hermes              # start chatting!
+# Butuh Rust stable (rustup)
+cargo build --release -p hermes-cli
+sudo install -m755 target/release/hermes /usr/local/bin/hermes
 ```
 
-### Troubleshooting
-
-#### Windows Defender or antivirus flags `uv.exe` as malware
-
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Hermes `bin` folder (`%LOCALAPPDATA%\hermes\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Hermes bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
-
-**To verify your copy is authentic:**
-
-```powershell
-# Install GitHub CLI if needed
-winget install --id GitHub.cli
-
-# Login to GitHub
-gh auth login
-
-# Run verification
-$uv = "$env:LOCALAPPDATA\hermes\bin\uv.exe"
-$ver = (& $uv --version).Split(' ')[1]
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$zip = "$env:TEMP\uv.zip"
-Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
-gh attestation verify $zip --repo astral-sh/uv
-Expand-Archive $zip "$env:TEMP\uv_x" -Force
-(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
-```
-
-If attestation says "Verification succeeded" and the last line prints `True`, you're good.
-
-**To whitelist Hermes:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"`
-- **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
-- Whitelist the **folder**, not the file hash — Hermes updates `uv` and the hash changes every version
-
-For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553), [astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011), [astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079).
-
----
-
-## Getting Started
+## Mulai cepat
 
 ```bash
-hermes              # Interactive CLI — start a conversation
-hermes model        # Choose your LLM provider and model
-hermes tools        # Configure which tools are enabled
-hermes config set   # Set individual config values
-hermes config get   # Print individual config values
-hermes gateway      # Start the messaging gateway (Telegram, Discord, etc.)
-hermes setup        # Run the full setup wizard (configures everything at once)
-hermes claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
-hermes update       # Update to the latest version
-hermes doctor       # Diagnose any issues
+hermes setup          # wizard: pilih provider, masukkan API key, pilih model
+hermes doctor         # diagnosa konfigurasi
+hermes chat           # obrolan interaktif
+hermes run -q "ringkas file README.md" --yes
 ```
 
-📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
+## Konfigurasi
 
----
+`~/.hermes/config.toml` (dibuat otomatis) dan `~/.hermes/.env` untuk API key:
 
-## Skip the API-key collection — Nous Portal
+```toml
+[[providers]]
+name = "openrouter"
+protocol = "openai"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
 
-Hermes works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
+[profiles.default]
+provider = "openrouter"
+model = "nousresearch/hermes-4-70b"
+working_dir = "/home/chewy/proyek"
 
-- **300+ models** — pick any of them with `/model <name>`
-- **Tool Gateway** — web search, image generation (FAL), text-to-speech (OpenAI), cloud browser (Browser Use), all routed through your sub. No extra accounts.
+[mcp_servers.docs]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-docs"]
+```
 
-One command from a fresh install:
+## Gateway (Telegram, Discord, Slack, WhatsApp)
 
 ```bash
-hermes setup --portal
+export TELEGRAM_BOT_TOKEN=123456:ABC...
+hermes gateway --platform telegram
+
+export DISCORD_BOT_TOKEN=...   # aktifkan intent MESSAGE_CONTENT
+hermes gateway --platform discord
+
+export SLACK_BOT_TOKEN=xoxb-... SLACK_APP_TOKEN=xapp-...
+hermes gateway --platform slack  # socket mode
+
+export WHATSAPP_TOKEN=... WHATSAPP_PHONE_NUMBER_ID=...
+hermes gateway --platform whatsapp --webhook-port 8080
 ```
 
-That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `hermes portal info`. Full details on the [Tool Gateway docs page](https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway).
+Kirim pesan ke bot; tiap chat mendapat sesi agen sendiri yang persisten. Perintah `/new` memulai sesi baru,
+`/voice <teks>` (Telegram) mengirim voice note. Mode multi-bot: daftarkan `[[bots]]` di `config.toml`
+lalu `hermes gateway --bot <nama>`. Event balasan & cron dapat diteruskan ke URL di `webhooks.outgoing`.
 
-You can still bring your own keys per-tool whenever you want — the gateway is per-backend, not all-or-nothing.
+Webhook masuk generik: `hermes webhook serve --port 8080`, lalu `POST /hook {"text": "..."}`.
 
----
-
-## CLI vs Messaging Quick Reference
-
-Hermes has two entry points: start the terminal UI with `hermes`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
-
-| Action                         | CLI                                           | Messaging platforms                                                              |
-| ------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------- |
-| Start chatting                 | `hermes`                                      | Run `hermes gateway setup` + `hermes gateway start`, then send the bot a message |
-| Start fresh conversation       | `/new` or `/reset`                            | `/new` or `/reset`                                                               |
-| Change model                   | `/model [provider:model]`                     | `/model [provider:model]`                                                        |
-| Set a personality              | `/personality [name]`                         | `/personality [name]`                                                            |
-| Retry or undo the last turn    | `/retry`, `/undo`                             | `/retry`, `/undo`                                                                |
-| Compress context / check usage | `/compress`, `/usage`, `/insights [--days N]` | `/compress`, `/usage`, `/insights [days]`                                        |
-| Browse skills                  | `/skills` or `/<skill-name>`                  | `/<skill-name>`                                                                  |
-| Interrupt current work         | `Ctrl+C` or send a new message                | `/stop` or send a new message                                                    |
-| Platform-specific status       | `/platforms`                                  | `/status`, `/sethome`                                                            |
-
-For the full command lists, see the [CLI guide](https://hermes-agent.nousresearch.com/docs/user-guide/cli) and the [Messaging Gateway guide](https://hermes-agent.nousresearch.com/docs/user-guide/messaging).
-
----
-
-## Documentation
-
-All documentation lives at **[hermes-agent.nousresearch.com/docs](https://hermes-agent.nousresearch.com/docs/)**:
-
-| Section                                                                                             | What's Covered                                             |
-| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| [Quickstart](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart)                 | Install → setup → first conversation in 2 minutes          |
-| [CLI Usage](https://hermes-agent.nousresearch.com/docs/user-guide/cli)                              | Commands, keybindings, personalities, sessions             |
-| [Configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuration)                | Config file, providers, models, all options                |
-| [Messaging Gateway](https://hermes-agent.nousresearch.com/docs/user-guide/messaging)                | Telegram, Discord, Slack, WhatsApp, Signal, Home Assistant |
-| [Security](https://hermes-agent.nousresearch.com/docs/user-guide/security)                          | Command approval, DM pairing, container isolation          |
-| [Tools & Toolsets](https://hermes-agent.nousresearch.com/docs/user-guide/features/tools)            | 40+ tools, toolset system, terminal backends               |
-| [Skills System](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills)              | Procedural memory, Skills Hub, creating skills             |
-| [Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory)                     | Persistent memory, user profiles, best practices           |
-| [MCP Integration](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp)               | Connect any MCP server for extended capabilities           |
-| [Cron Scheduling](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron)              | Scheduled tasks with platform delivery                     |
-| [Context Files](https://hermes-agent.nousresearch.com/docs/user-guide/features/context-files)       | Project context that shapes every conversation             |
-| [Architecture](https://hermes-agent.nousresearch.com/docs/developer-guide/architecture)             | Project structure, agent loop, key classes                 |
-| [Contributing](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing)             | Development setup, PR process, code style                  |
-| [CLI Reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands)                  | All commands and flags                                     |
-| [Environment Variables](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) | Complete env var reference                                 |
-
----
-
-## Migrating from OpenClaw
-
-If you're coming from OpenClaw, Hermes can automatically import your settings, memories, skills, and API keys.
-
-**During first-time setup:** The setup wizard (`hermes setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
-
-**Anytime after install:**
+## Cron
 
 ```bash
-hermes claw migrate              # Interactive migration (full preset)
-hermes claw migrate --dry-run    # Preview what would be migrated
-hermes claw migrate --preset user-data   # Migrate without secrets
-hermes claw migrate --overwrite  # Overwrite existing conflicts
+hermes cron add briefing-pagi "0 0 7 * * *" \
+  --prompt "Buatkan briefing pagi dari berita teknologi terbaru" \
+  --platform telegram --target 123456789
+hermes cron serve   # jalankan scheduler
 ```
 
-What gets imported:
+## Voice, ACP, Batch
 
-- **SOUL.md** — persona file
-- **Memories** — MEMORY.md and USER.md entries
-- **Skills** — user-created skills → `~/.hermes/skills/openclaw-imports/`
-- **Command allowlist** — approval patterns
-- **Messaging settings** — platform configs, allowed users, working directory
-- **API keys** — allowlisted secrets (Telegram, OpenRouter, OpenAI, Anthropic, ElevenLabs)
-- **TTS assets** — workspace audio files
-- **Workspace instructions** — AGENTS.md (with `--workspace-target`)
+```bash
+hermes voice say "Halo, ini Hermes" --out halo.mp3
+hermes voice listen rekaman.ogg --language id
+hermes acp                       # server ACP via stdio untuk Zed/IDE
+hermes batch --input prompts.jsonl --out hasil.jsonl
+hermes session export --session <id> --format trajectory
+```
 
-See `hermes claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
+## Pengembangan
 
----
+```bash
+cargo test --workspace
+cargo clippy --workspace -- -D warnings
+# Test browser terhadap Chrome nyata (headless di :9222):
+HERMES_TEST_REAL_BROWSER=1 cargo test -p hermes-tools real_browser
+```
 
-## Contributing
+### Verifikasi tanpa kredensial (2026-10-19)
 
-We welcome contributions! See the [Contributing Guide](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
+Integrasi pihak ketiga diverifikasi tanpa token asli melalui mock server
+lokal dan layanan nyata yang bisa dijalankan offline:
 
-Start with the [PM developer workflow](website/docs/reference/package-management.md#developer-workflow)
-for activation, daily use, dependency changes, and leaving the environment.
-[Development Setup](CONTRIBUTING.md#development-setup) covers the separate test environment and verification commands.
+- **Gateway** (`hermes-gateway/tests/mock_platforms.rs`, 9 test): Telegram
+  (kirim + penolakan `{"ok": false}`), Discord (auth `Bot`), Slack (Bearer),
+  Matrix (kirim + alur `/sync` → terima → balas), Teams (token OAuth +
+  activities), WhatsApp (kirim + verifikasi webhook benar/salah + terima →
+  balas). Base URL tiap API bisa di-override via env
+  (`TELEGRAM_API_BASE`, `DISCORD_API_BASE`, `SLACK_API_BASE`,
+  `WHATSAPP_API_BASE`, `TEAMS_TOKEN_URL`).
+- **Browser CDP**: mock WebSocket server untuk roundtrip protokol, plus test
+  terhadap **Google Chrome headless nyata** (navigate, snapshot, exec, click
+  dengan verifikasi perubahan DOM, get_images, screenshot PNG).
+- **TUI**: dijalankan di bawah PTY semu (`script`), terverifikasi render UI,
+  input keyboard, alur kirim → thinking → error provider, dan keluar bersih
+  via Esc.
+- **Bug yang ditemukan test ini**: Telegram tidak menganggap
+  `{"ok": false}` sebagai error (sudah diperbaiki).
 
----
+## Lisensi
 
-## Community
-
-- 💬 [Discord](https://discord.gg/NousResearch)
-- 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
-- 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Hermes and other MCP hosts, with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
-- 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Community WeChat bridge: Run Hermes Agent and OpenClaw on the same WeChat account.
-
----
-
-## License
-
-MIT — see [LICENSE](LICENSE).
-
-Built by [Nous Research](https://nousresearch.com).
+MIT — sama seperti Hermes Agent asli oleh Nous Research.
