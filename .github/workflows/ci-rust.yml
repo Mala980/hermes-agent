@@ -2,7 +2,7 @@ name: CI Rust
 
 on:
   push:
-    branches: ["main", "port-native-providers"]
+    branches: ["main", "rust-port"]
   pull_request:
 
 jobs:
