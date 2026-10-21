@@ -5,7 +5,8 @@
 //! feed aktivitas ringkas, status bar bawah yang informatif.
 //! Tombol: Enter kirim · Esc keluar · PgUp/PgDn scroll · Ctrl+C keluar ·
 //! F1 bantuan · F2 tema · F3 ganti sesi · F4 proses background.
-use super::{AgentFactory, App};
+use crate::app::App;
+use crate::cmd::chat::AgentFactory;
 use crossterm::{
     event::{Event, EventStream, KeyCode, KeyEvent, KeyEventKind, KeyModifiers},
     execute,
