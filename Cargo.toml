@@ -1,0 +1,75 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/hermes-core",
+    "crates/hermes-providers",
+    "crates/hermes-tools",
+    "crates/hermes-memory",
+    "crates/hermes-skills",
+    "crates/hermes-mcp",
+    "crates/hermes-gateway",
+    "crates/hermes-cron",
+    "crates/hermes-cli",
+]
+default-members = ["crates/hermes-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Hermes Rust Port"]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls", "rustls-tls-native-roots", "multipart"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+clap = { version = "4", features = ["derive", "env"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+chrono = { version = "0.4", features = ["serde"] }
+chrono-tz = "0.10"
+iana-time-zone = "0.1"
+libc = "0.2"
+uuid = { version = "1", features = ["v4", "serde"] }
+thiserror = "2"
+anyhow = "1"
+async-trait = "0.1"
+futures = "0.3"
+regex = "1"
+walkdir = "2"
+dirs = "5"
+toml = "0.8"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+rustyline = "15"
+cron = "0.15"
+serde_yaml = "0.9"
+similar = "2"
+tokio-tungstenite = { version = "0.26", features = ["rustls-tls-webpki-roots"] }
+futures-util = "0.3"
+sha2 = "0.10"
+hmac = "0.12"
+subtle = "2"
+lettre = { version = "0.11", default-features = false, features = ["smtp-transport", "tokio1", "tokio1-native-tls", "builder"] }
+async-imap = "0.11"
+tokio-native-tls = "0.3"
+tokio-util = { version = "0.7", features = ["compat"] }
+url = "2"
+ratatui = "0.29"
+crossterm = { version = "0.28", features = ["event-stream"] }
+pulldown-cmark = "0.13"
+base64 = "0.22"
+
+hermes-core = { path = "crates/hermes-core" }
+hermes-providers = { path = "crates/hermes-providers" }
+hermes-tools = { path = "crates/hermes-tools" }
+hermes-memory = { path = "crates/hermes-memory" }
+hermes-skills = { path = "crates/hermes-skills" }
+hermes-mcp = { path = "crates/hermes-mcp" }
+hermes-gateway = { path = "crates/hermes-gateway" }
+hermes-cron = { path = "crates/hermes-cron" }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

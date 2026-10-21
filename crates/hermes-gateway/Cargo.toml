@@ -1,0 +1,34 @@
+[package]
+name = "hermes-gateway"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+hermes-core.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+tracing.workspace = true
+chrono.workspace = true
+futures.workspace = true
+tokio-tungstenite.workspace = true
+futures-util.workspace = true
+lettre.workspace = true
+async-imap.workspace = true
+tokio-native-tls.workspace = true
+tokio-util.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+url.workspace = true
+uuid.workspace = true
+subtle.workspace = true
+regex.workspace = true
+pulldown-cmark.workspace = true
+
+[dev-dependencies]
+hmac.workspace = true
+sha2.workspace = true

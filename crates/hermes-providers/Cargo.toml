@@ -1,0 +1,19 @@
+[package]
+name = "hermes-providers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+hermes-core.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+tracing.workspace = true
+chrono.workspace = true
+futures.workspace = true
+sha2.workspace = true
+hmac.workspace = true
